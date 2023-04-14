@@ -1,6 +1,10 @@
+resource "random_id" "bucket_suffix" {
+  byte_length = 4
+}
+
 resource "google_storage_bucket" "postgres_backup_bucket" {
-  name     = "toggl-postgres-backup-bucket"
-  location = "us-central1"
+  name     = "${var.backup_bucket_name}_${random_id.bucket_suffix.hex}"
+  location = var.region
 
   // 15 days retention period. 
 
@@ -9,7 +13,7 @@ resource "google_storage_bucket" "postgres_backup_bucket" {
       type = "Delete"
     }
     condition {
-      age = "15"
+      age = var.backup_rention_period
     }
   }
 

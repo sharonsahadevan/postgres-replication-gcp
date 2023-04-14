@@ -15,7 +15,7 @@ resource "google_compute_instance" "postgresql-standby" {
     access_config {}
   }
 
-metadata_startup_script = <<-EOF
+  metadata_startup_script = <<-EOF
 #!/bin/bash
 sudo apt-get update
 
