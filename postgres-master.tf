@@ -1,7 +1,7 @@
 resource "google_compute_instance" "postgresql" {
   name         = "postgresql-master"
-  machine_type = "e2-micro"
-  zone         = "us-central1-a"
+  machine_type = var.master_instance_type
+  zone         = var.zone
 
   labels = {
     name = "postgresql-master"
@@ -31,12 +31,12 @@ sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)
 sudo apt-get update
 sudo apt-get install -y postgresql-13
 
+sleep 60
+sudo -u postgres psql -c "CREATE ROLE replicator WITH REPLICATION LOGIN;"
+
 # Configure PostgreSQL 13
 sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/13/main/postgresql.conf
-#sudo sh -c 'echo "host all all 0.0.0.0/0 md5" >> /etc/postgresql/13/main/pg_hba.conf'
-sudo sh -c 'echo "host all all 10.0.0.0/16 trust" >> /etc/postgresql/13/main/pg_hba.conf'
 sudo sh -c 'echo "host replication all 10.0.0.0/16 trust" >> /etc/postgresql/13/main/pg_hba.conf'
-#sudo sh -c 'echo "host replication all 0.0.0.0/0 md5" >> /etc/postgresql/13/main/pg_hba.conf'
 sudo sed -i "s/#wal_level = replica/wal_level = replica/" /etc/postgresql/13/main/postgresql.conf
 sudo sed -i "s/#max_wal_senders = 10/max_wal_senders = 5/" /etc/postgresql/13/main/postgresql.conf
 sudo sed -i "s/#wal_keep_segments = 0/wal_keep_segments = 32/" /etc/postgresql/13/main/postgresql.conf
