@@ -1,7 +1,7 @@
 resource "google_compute_instance" "postgresql-standby" {
   name         = "postgresql-standby"
-  machine_type = "e2-micro"
-  zone         = "us-central1-a"
+  machine_type = var.standby_instance_type
+  zone         = var.zone
 
   boot_disk {
     initialize_params {

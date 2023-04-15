@@ -1,7 +1,7 @@
 resource "google_compute_instance" "postgresql" {
   name         = "postgresql-master"
-  machine_type = "e2-micro"
-  zone         = "us-central1-a"
+  machine_type = var.master_instance_type
+  zone         = var.zone
 
   labels = {
     name = "postgresql-master"
