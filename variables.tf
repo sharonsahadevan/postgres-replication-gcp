@@ -2,7 +2,7 @@
 # General
 
 variable "project_id" {
-  default = "toggl-pgsql"
+  default = "toggle-pgsql"
 }
 
 variable "region" {

@@ -29,16 +29,14 @@ sudo apt-get install -y postgresql-13
 
 # Configure PostgreSQL 13
 sudo sed -i "s/#listen_addresses = 'localhost'/listen_addresses = '*'/" /etc/postgresql/13/main/postgresql.conf
-sudo sh -c 'echo "host all all 10.0.0.0/16 trust" >> /etc/postgresql/13/main/pg_hba.conf'
-sudo sh -c 'echo "host replication all 10.0.0.0/16 trust" >> /etc/postgresql/13/main/pg_hba.conf'
 sudo systemctl restart postgresql
 
 # Perform base backup from the master instance
 sudo -u postgres pg_basebackup -h <MASTER_IP> -D /var/lib/postgresql/13/main -U replicator -v -P --wal-method=stream
 sudo cp /etc/postgresql/13/main/postgresql.conf /etc/postgresql/13/main/postgresql.conf.bak
 sudo sh -c 'echo "standby_mode = on" >> /etc/postgresql/13/main/postgresql.conf'
-sudo sh -c 'echo "primary_conninfo = 'host=<MASTER_IP> port=5432 user=replicator application_name=postgresql-standby'" >> /etc/postgresql/13/main/postgresql.conf'
-sudo sh -c 'echo "trigger_file = '/tmp/postgresql.trigger'" >> /etc/postgresql/13/main/postgresql.conf'
+sudo sh -c 'echo "primary_conninfo = '\''host=10.0.0.7 port=5432 user=replicator application_name=postgresql-standby'\''" >> /etc/postgresql/13/main/postgresql.conf'
+sudo sh -c 'echo "promote_trigger_file = '/tmp/postgresql.trigger'" >> /etc/postgresql/13/main/postgresql.conf'
 
 # Restart PostgreSQL 13
 sudo systemctl restart postgresql
